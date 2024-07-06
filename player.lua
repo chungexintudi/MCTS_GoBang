@@ -1,16 +1,24 @@
 M={}
 
---应该想办法实现一个读取用户输入再返回的函数read_input
---能修改引擎后再打包吗?
-function M.take_action( current_state )
-    
+function M.setFunc( func )
+    Runtime:addEventListener( "mouse", func )
 end
 
-local function onMouseEvent( event )
-    if event.type == "down" then
-        print("click")    
+function M.trans(x,y)
+    local cx = display.contentCenterX
+    local cy = display.contentCenterY
+    for i=0,2,1 do
+        for j=0,2,1 do
+            if 
+            x >= cx-100+j*100-49 and
+            x <= cx-100+j*100+49 and
+            y >= cy-100+i*100-49 and
+            y <= cy-100+i*100+49 then
+                return {i,j}                    
+            end
+        end
     end
+    return {-1,-1}
 end
 
-Runtime:addEventListener( "mouse", onMouseEvent )
 return M

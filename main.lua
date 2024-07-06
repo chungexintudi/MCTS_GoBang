@@ -1,5 +1,6 @@
 local player = require 'player'
 local ai = require 'mcts'
+local Board = require 'board'
 
 print(_VERSION)
 math.randomseed(os.time())
@@ -16,7 +17,6 @@ end
 local function drawBkg( group )
     local desk = display.newRect( group, cx, cy, 640, 480 )
     desk:setFillColor(250.0/255.0,235.0/255.0,215.0/255.0)
-
     for i = 0,2,1 do
         for j = 0,2,1 do
             clear( group,i,j )
@@ -41,14 +41,30 @@ local function put2(group,i,j)
 end
 
 
+local board = Board:new()
 drawBkg( mainGroup )
---put1(mainGroup,0,0)
---put2(mainGroup,1,1)
---put1(mainGroup,2,2)
-
-local state = {}
-local action = {}
-action = ai.take_action( state )
-print("action=",action[1],action[2])
 
 
+--注意,绘制从0开始计数,数组从1开始计数
+local function onMouseEvent( event )
+    if event.type == "down" then
+        print("click",event.x,event.y)    
+        local pos1 = player.trans( event.x,event.y )
+        --玩家下棋
+        if pos1[1] ~= -1 and pos1[2] ~= -1 then
+            put1(mainGroup,pos1[1],pos1[2])
+            board.data[pos1[1]+1][pos1[2]+1] = 1
+        end 
+        --AI下棋
+        local pos2 = ai.take_action( board )
+        if pos2[1] ~= -1 and pos2[2] ~= -1 then
+            put2(mainGroup,pos2[1],pos2[2])
+            board.data[pos2[1]+1][pos2[2]+1] = 2
+        end
+        --判定胜负
+        
+        --打印棋盘
+    end
+end
+
+player.setFunc( onMouseEvent )
