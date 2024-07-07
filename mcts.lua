@@ -1,7 +1,7 @@
 M={}
 
 
-function M.take_action( board )
+function M.take_action( game_state )
     local i = -1
     local j = -1
     
@@ -9,7 +9,7 @@ function M.take_action( board )
         local i = math.random(0,2)       
         local j = math.random(0,2) 
         
-        if board.data[i+1][j+1] == 0 then
+        if game_state.board.data[i+1][j+1] == 0 then
             local action={i,j}
             return action
         end

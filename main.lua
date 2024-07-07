@@ -40,30 +40,43 @@ local function put2(group,i,j)
     putCircle(group,i,j,{65/255,105/255,225/255})
 end
 
+local function run_step( game_state, pos )
+    print("run_step:player=",game_state.player)
+    if pos[1] ~= -1 and pos[2] ~= -1 then
+        if game_state.board.data[pos[1]+1][pos[2]+1] == 0 then
+            if game_state.player == 1 then
+                put1(mainGroup,pos[1],pos[2])
+            else
+                put2(mainGroup,pos[1],pos[2])
+            end
+            game_state.board.data[pos[1]+1][pos[2]+1] = game_state.player
+        end
+    end 
 
-local board = Board:new()
+end
+
+--state.player,1代表人,2代表AI
+local state = {}
+state.board = Board:new()
+state.player = 1
 drawBkg( mainGroup )
 
 
 --注意,绘制从0开始计数,数组从1开始计数
 local function onMouseEvent( event )
     if event.type == "down" then
-        print("click",event.x,event.y)    
-        local pos1 = player.trans( event.x,event.y )
         --玩家下棋
-        if pos1[1] ~= -1 and pos1[2] ~= -1 then
-            put1(mainGroup,pos1[1],pos1[2])
-            board.data[pos1[1]+1][pos1[2]+1] = 1
-        end 
+        local pos1 = player.trans( event.x,event.y )
+        run_step( state, pos1 )
+        state.player = state.player%2+1                        
+
         --AI下棋
-        local pos2 = ai.take_action( board )
-        if pos2[1] ~= -1 and pos2[2] ~= -1 then
-            put2(mainGroup,pos2[1],pos2[2])
-            board.data[pos2[1]+1][pos2[2]+1] = 2
-        end
+        local pos2 = ai.take_action( state )
+        run_step( state, pos2 )
+        state.player = state.player%2+1                        
+
         --判定胜负
-        
-        --打印棋盘
+           
     end
 end
 
