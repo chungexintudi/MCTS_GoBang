@@ -1,6 +1,7 @@
 local player = require 'player'
 local ai = require 'mcts'
 local Board = require 'board'
+local State = require 'state'
 
 print(_VERSION)
 math.randomseed(os.time())
@@ -56,9 +57,7 @@ local function run_step( game_state, pos )
 end
 
 --state.player,1代表人,2代表AI
-local state = {}
-state.board = Board:new()
-state.player = 1
+local state = State:new( 1, Board:new() )
 drawBkg( mainGroup )
 
 
@@ -67,16 +66,24 @@ local function onMouseEvent( event )
     if event.type == "down" then
         --玩家下棋
         local pos1 = player.trans( event.x,event.y )
+        if pos1[1] == -1 or pos1[2] == -1 then
+            return
+        end
         run_step( state, pos1 )
         state.player = state.player%2+1                        
 
         --AI下棋
         local pos2 = ai.take_action( state )
+        if pos2[1] == -1 or pos2[2] == -1 then
+            return
+        end
         run_step( state, pos2 )
         state.player = state.player%2+1                        
 
         --判定胜负
-           
+        local is_over,winner
+        is_over,winner = State:get_state_result()
+        print(is_over,winner)
     end
 end
 

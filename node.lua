@@ -1,11 +1,11 @@
+local State = require 'state'
+
 Node={}
 
 function Node:new( state, pos, parent)
     local o = {}
     setmetatable(o, {__index=self})
-    o.state={}
-    o.state.player = state.player
-    o.state.board = board:clone()
+    o.state = state:clone()
     o.untried_actions = board:get_available_actions()
     o.parent=parent
     o.children={}
@@ -44,9 +44,7 @@ function Node:expand_func()
     local next_board = self.state.board:clone()
     next_board[action[1]][action[2]] = current_player
     local next_player = current_player%2+1
-    local state = {}
-    state.board = next_board
-    state.player = next_player
+    local state = State:new( next_player,next_board )
     local child_node = Node:new(state,action,self)
     table.insert( self.children,child_node )
 
@@ -62,6 +60,19 @@ function Node:is_root_node()
 end
 
 function Node:rollout_func()
+    local current_state = self.state:clone()
+
+    while(true)
+    do
+        is_over, winner = current_state:get_state_result()
+        if is_over then
+            break
+        end
+        available_actions = current_state:get_available_actions()
+        action = Node:get_random_action(available_actions)
+        current_state = current_state:get_next_state(action)
+    end
+    return winner
 
 end
 
