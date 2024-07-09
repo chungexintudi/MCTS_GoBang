@@ -14,7 +14,7 @@ function M.trans(x,y)
             x <= cx-100+j*100+49 and
             y >= cy-100+i*100-49 and
             y <= cy-100+i*100+49 then
-                return {i,j}                    
+                return {i+1,j+1}                    
             end
         end
     end

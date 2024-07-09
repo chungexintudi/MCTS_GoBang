@@ -16,26 +16,33 @@ function Board:new()
     return o
 end
 
-function Board.clone( _bd )
+function Board:clone()
     local bd=Board:new()
     for i =1,3,1 do
         for j =1,3,1 do
-            bd.data[i][j] = _bd.data[i][j]     
+            bd.data[i][j] = self.data[i][j]     
         end
     end
     return bd
 end
 
-function Board:get_available_actions()
-
-end
-  
-function Board:get_state_result()
-
-end
 
 function Board:show()
+    for i = 1,3,1 do    
+        print( self.data[i][1], self.data[i][2],self.data[i][3] )
+        print("\n")
+    end
+end
 
+function Board:compare( other )
+    for i =1,3,1 do
+        for j =1,3,1 do
+            if self.data[i][j] ~= other.data[i][j] then
+                return false
+            end
+        end
+    end
+    return true
 end
 
 return Board
